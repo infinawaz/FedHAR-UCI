@@ -1,5 +1,3 @@
-flwr
-torch
-numpy
-torchvision
-Pillow
+flwr[simulation]>=1.8.0
+torch>=2.0.0
+numpy>=1.21.0

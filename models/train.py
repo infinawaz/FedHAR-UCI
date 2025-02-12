@@ -1,46 +1,34 @@
-# models/train.py
 import torch
-import torch.nn as nn
-import torch.optim as optim
+from torch import nn
 
-def train(model, train_loader, epochs=1, lr=0.01, device="cpu"):
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(model.parameters(), lr=lr)
+def train(model, train_loader, epochs=1, device="cpu"):
     model.train()
-    model.to(device)
+    criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters())
     
-    for epoch in range(epochs):
-        running_loss = 0.0
-        for data, target in train_loader:
-            data, target = data.to(device), target.to(device)
+    for _ in range(epochs):
+        for inputs, labels in train_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
             optimizer.zero_grad()
-            outputs = model(data)
-            loss = criterion(outputs, target)
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
-            running_loss += loss.item()
-        print(f"Epoch {epoch+1}/{epochs}, Loss: {running_loss/len(train_loader):.4f}")
+    
+    return model
 
 def test(model, test_loader, device="cpu"):
-    criterion = nn.CrossEntropyLoss()
     model.eval()
-    model.to(device)
-    
-    test_loss = 0.0
-    correct = 0
-    total = 0
+    criterion = nn.CrossEntropyLoss()
+    correct, total, loss = 0, 0, 0.0
     
     with torch.no_grad():
-        for data, target in test_loader:
-            data, target = data.to(device), target.to(device)
-            outputs = model(data)
-            loss = criterion(outputs, target)
-            test_loss += loss.item() * data.size(0)
-            _, predicted = outputs.max(1)
-            correct += predicted.eq(target).sum().item()
-            total += data.size(0)
+        for inputs, labels in test_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+            outputs = model(inputs)
+            loss += criterion(outputs, labels).item()
+            _, predicted = torch.max(outputs, 1)
+            correct += (predicted == labels).sum().item()
+            total += labels.size(0)
     
-    avg_loss = test_loss / total
-    accuracy = correct / total
-    print(f"Test Loss: {avg_loss:.4f}, Accuracy: {accuracy*100:.2f}%")
-    return avg_loss, accuracy
+    return loss / len(test_loader), correct / total

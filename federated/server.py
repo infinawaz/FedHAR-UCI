@@ -1,23 +1,26 @@
-# federated/server.py
 import flwr as fl
+from flwr.server import ServerApp
+from flwr.server.strategy import FedAvg
 
-def main():
-    fl.server.start_server(server_address="[::]:8080", config={"num_rounds": 10})
+# Define strategy
+strategy = FedAvg(
+    fraction_fit=1.0,
+    fraction_evaluate=1.0,
+    min_fit_clients=2,
+    min_evaluate_clients=2,
+    min_available_clients=2,
+)
+
+# Define ServerApp
+app = ServerApp(
+    config=fl.server.ServerConfig(num_rounds=3),
+    strategy=strategy,
+)
 
 if __name__ == "__main__":
-    main()
-
-# Run the server.py script in a terminal:
-# $ python federated/server.py
-# Now run the client.py script in another terminal:
-# $ python federated/client.py --model dnn --batch_size 32 --device cpu
-# $ python federated/client.py --model cnn --batch_size 32 --device cpu
-# $ python federated/client.py --model rnn --batch_size 32 --device cpu
-# Run the client.py script in another terminal:
-# $ python federated/client.py --model dnn --batch_size 32 --device cuda
-# $ python federated/client.py --model cnn --batch_size 32 --device cuda
-# $ python federated/client.py --model rnn --batch_size 32 --device cuda
-# The server will print the aggregated results after each round.
-# The clients will print the training loss and test accuracy after each round.
-# The server will print the aggregated results after each round.
-# The clients will print the training loss and test accuracy after each round.  
+    # Start server
+    fl.server.start_server(
+        server_address="0.0.0.0:9091",
+        config=fl.server.ServerConfig(num_rounds=3),
+        strategy=strategy,
+    )
