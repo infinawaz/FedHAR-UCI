@@ -44,7 +44,7 @@ pandas
 
 .
 .
-├── har_fl.py                # Main federated learning code (server and client)
+├── models.py                # Main federated learning code (server and client)
 ├── data_processing.py       # Script for processing raw HAR data and generating client datasets
 ├── requirements.txt         # File listing required Python packages
 ├── client_1_data.h5         # Generated HDF5 file for client 1 (contains "inputs" and "labels")
@@ -137,18 +137,18 @@ window_plot(X, y, col=0, y_index=0)
 Start the Flower server. By default, it is configured to run for 10 rounds:
 
 bash
-python har_fl.py --server
+python models.py --server
 
 3. Running the Clients
 In separate terminal windows, start each client by providing its unique client ID. For example:
 
 bash
 
-python har_fl.py --client 1
-python har_fl.py --client 2
-python har_fl.py --client 3
-python har_fl.py --client 4
-python har_fl.py --client 5
+python models.py --client 1
+python models.py --client 2
+python models.py --client 3
+python models.py --client 4
+python models.py --client 5
 
 4. Monitoring Training
 
