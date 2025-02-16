@@ -130,7 +130,10 @@ from data_processing import read_files, window_plot, colNames, activityIDdict
 X, y = read_files()
 # Plot the data for column index 0 (e.g., 'body_acc_x') for the first sample
 window_plot(X, y, col=0, y_index=0)
+
+
 2. Running the Server
+
 Start the Flower server. By default, it is configured to run for 10 rounds:
 
 bash
@@ -148,6 +151,7 @@ python har_fl.py --client 4
 python har_fl.py --client 5
 
 4. Monitoring Training
+
     Client Terminals: Each client prints the average loss per epoch during local training.
     Server Terminal: The server prints global evaluation metrics (accuracy and loss) for each round. After training, charts and a summary table will be displayed.
 
